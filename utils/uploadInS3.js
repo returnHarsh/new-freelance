@@ -5,8 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 const s3Client = new S3Client({
   region : "ap-south-1",
   credentials : {
-    accessKeyId : "AKIAY4Q7QYXTQUTYWDRQKJNFTYE",
-    secretAccessKey : "YzuAB92cJ6QFJpHjseoPlXN/hCjW8kqeOZkgZuTysprjFX",
+    accessKeyId : "AKIAY4Q7QYXTQURQKJNF",
+    secretAccessKey : "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",
   }
 })
 

@@ -33,7 +33,8 @@ const headingAndParaSchema = new Schema({
 const blogsSchema = new Schema({
 	slug : {
 		type : String,
-		unique : true
+		unique : true,
+		required : true
 	},
 	coverImage : {
 		type : String,
@@ -49,12 +50,15 @@ const blogsSchema = new Schema({
 	},
 	title : {
 		type : String,
+		required : true
 	},
 	metaTitle : {
 		type: String,
+		default : undefined
 	},
 	metaDescription : {
-		type : String
+		type : String,
+		default : undefined
 	},
 	content : {
 		type : [headingAndParaSchema]

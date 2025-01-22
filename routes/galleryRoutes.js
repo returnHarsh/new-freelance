@@ -5,5 +5,5 @@ import { upload } from "../utils/multerConfig.js";
 export const router = express.Router();
 
 router.post("/upload" , upload.single("file") , createAGallery);
-router.get("/all/:page")
+router.get("/all/:page" , getAllGalleries)
 
