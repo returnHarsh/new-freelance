@@ -52,6 +52,10 @@ const blogsSchema = new Schema({
 		type : String,
 		required : true
 	},
+	des : {
+		type : String,
+		required : true
+	},
 	metaTitle : {
 		type: String,
 		default : undefined

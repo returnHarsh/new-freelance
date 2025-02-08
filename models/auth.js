@@ -6,4 +6,4 @@ const authSchema = new Schema({
 	password : {type : String , required : true},
 } , {timestamps : true})
 
-export const Auth = mongoose.model("auths" , authSchema)
+export const Admin = mongoose.model("admins" , authSchema)

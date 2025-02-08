@@ -4,6 +4,8 @@ import axios from "axios";
 
 export const getAllBlogs = async(req,res)=>{
 	try{
+		console.log("inside fetching all blogs");
+		
 		const{page} = req.params
 		const numberOfBlogsPerPage = 10;
 		const pageNumber = parseInt(page, 10) || 1;
@@ -20,10 +22,21 @@ export const getAllBlogs = async(req,res)=>{
 	}
 }
 
+export const getAllBlogsAtOnce = async(req,res)=>{
+	try{
+		const blogs = await Blogs.find({});
+		if(!blogs.length) return res.json({success : true , message : "No Blogs created" , data : []})
+		return res.json({success : true , message : "Blogs fetched successfully" , data : blogs})
+	}catch(err){
+		console.log("Error in getAllBlogsAtOnce " , err.message)
+	}
+}
+
 export const getBlogBySlug = async(req,res)=>{
 	try{
 		const{slug} = req.params
-		const getBlogBySlug = Blogs.findOne({slug}).lean();
+		const getBlogBySlug = await Blogs.findOne({slug}).lean()
+		console.log("blog is " , getBlogBySlug)
 		if(!getBlogBySlug) return res.json({success : false , message : "No Blog found with this slug"})
 		return res.json({success : true , message : "Blog found with this slug" , data : getBlogBySlug})
 	}catch(err){
@@ -33,9 +46,12 @@ export const getBlogBySlug = async(req,res)=>{
 
 export const createBlogs = async(req,res)=>{
 	try{
+		let coverImageUploadUrl
 		const coverImage = req.file
-		const{  title , slug , metaTitle , metaDescription , content} = req.body;
-		if(!title || !slug || !metaTitle || !metaDescription || !content.length) return res.json({success : false , message : "all fields are required"})
+		const{  title , slug , metaTitle , metaDescription , des} = req.body;
+		let {content} = req.body;
+		content = JSON.parse(content)
+		if(!title || !slug || !des) return res.json({success : false , message : "all fields are required"})
 		
 		// we need to check if , for this slug if any blog exists previously or not
 		const isBlogexists = await Blogs.findOne({slug});
@@ -43,7 +59,7 @@ export const createBlogs = async(req,res)=>{
 		
 		if(coverImage){
 			console.log("Cover image is uploaded")
-			const coverImageUploadUrl = await putObjectUrl("freelance-blogs");
+			coverImageUploadUrl = await putObjectUrl("freelance-blogs");
 			// now we get the put object url for uploading the image
              await axios({
 				url : coverImageUploadUrl.url,
@@ -57,14 +73,15 @@ export const createBlogs = async(req,res)=>{
 
 		const blog = await Blogs.create({
 			slug,
-			metaDescription,
-			metaTitle,
+			metaDescription : metaDescription ? metaDescription : undefined,
+			metaTitle : metaTitle ? metaTitle : undefined ,
 			title,
 			content,
+			des
 		})
 		if(coverImage) {
 			blog.coverImage = coverImageUploadUrl.fileName
-			blog.url = `https://freelance-blogs.s3.ap-south-1.amazonaws.com/${coverImage.fileName}`
+			blog.url = `https://freelance-blogs.s3.ap-south-1.amazonaws.com/${coverImageUploadUrl.fileName}`
 			await blog.save();
 		}
 
@@ -109,5 +126,15 @@ export const uploadCoverImage = async(req,res)=>{
 		
 	}catch(err){
 		console.log("error in uploadCoverImage " , err.message)
+	}
+}
+
+export const deleteBlog = async(req,res)=>{
+	try{
+		const {_id} = req.body;
+		await Blogs.deleteOne({_id});
+		res.json({success : true , message : "Blog deleted successfully"})
+	}catch(err){
+		console.log("Error in deleteBlog " , err.message)
 	}
 }

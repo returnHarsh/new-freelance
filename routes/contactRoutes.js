@@ -1,7 +1,9 @@
 import express from "express";
-import {getAllContacts , registerContact} from "../controllers/contactController.js"
+import {deleteAppointment, getAllContacts , getAllContactsAtOnce, registerContact} from "../controllers/contactController.js"
 
 export const router = express.Router();
 
-router.get("/:page" , getAllContacts);
 router.post("/register" , registerContact )
+// router.get("/:page" , getAllContacts);
+router.get("/" , getAllContactsAtOnce)
+router.delete("/delete/:_id" , deleteAppointment)

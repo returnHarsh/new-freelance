@@ -17,13 +17,42 @@ export const getAllContacts = async(req,res)=>{
 	}
 }
 
+export const getAllContactsAtOnce = async(req,res)=>{
+	try{
+		const contacts = await Contact.find({}).sort({date : -1});
+		return res.json({sucess : true , message :"All contacts found " , data : contacts});
+	}catch(err){
+		console.log("Error in getAllContactsAtOnce " , err.message)
+	}
+}
+
+export const deleteAppointment  = async(req,res)=>{
+	try{
+		const {_id} = req.params;
+		const appointment = await Contact.deleteOne({_id});
+		return res.json({sucess : true , message : "Appointment deleted successfully"});
+	}catch(err){
+		console.log("Error at deleteAppointment " , err.message)
+	}
+}
+
 export const registerContact = async(req,res)=>{
 	try{
-		const {name , email , phone , address  } = req.body;
-		if(!name || !email || !phone) return res.json({sucess : false , message : "All fields are required"})
+		const {name , email , phone , date , time , message , clinicAddress , service } = req.body;
+		if(!name || !email || !phone || !clinicAddress || !date || !time) return res.json({sucess : false , message : "All fields are required"})
+
+		// first we have to check for this date and time and address does any other appointment already exists or not
+		const isAppointmentExists = await Contact.find({
+			$and: [
+				{ date: date },
+				{ time: time },
+				{ clinicAddress: clinicAddress }
+			]
+		});
+		if(isAppointmentExists.length) return res.json({success : false , message : "Appointemnt already exists for this time and date"})
 
 		const contact = new Contact({
-			name , email , phone , address
+			name , email , phone , clinicAddress , date , time , message , service
 		})
 		await contact.save();
 

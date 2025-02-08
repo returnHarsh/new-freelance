@@ -2,6 +2,32 @@ import {Gallery} from "../models/gallery.js";
 import { putObjectUrl } from "../utils/uploadInS3.js";
 import axios from "axios"
 
+
+export const getAllTheGalleries = async(req,res)=>{
+	try{
+		const galleries = await Gallery.find({}).sort({createdAt : -1});
+		return res.json({success : true , message : "All galleries fetched successfully" , data : galleries})
+	}catch(err){
+		console.log("Error in getAlltheGaleries " , err.message)
+	}
+}
+
+export const deleteGallery = async(req,res)=>{
+	try{
+
+		const{_id} = req.params;
+		const gallery = await Gallery.deleteOne({_id});
+		if(gallery.deletedCount === 0){
+			throw Error("No gallery exists with this id")
+		}
+		return res.json({success : true , message : "Gallery Deleted Successfully"});
+
+	}catch(err){
+		console.log("Error in deleteGallery " , err.message);
+		return res.json({success : false , message : err.message})
+	}
+}
+
 export const getAllGalleries = async(req,res)=>{
 	try{
 		const {page} = req.params;
