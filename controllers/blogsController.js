@@ -51,7 +51,7 @@ export const createBlogs = async(req,res)=>{
 		const{  title , slug , metaTitle , metaDescription , des} = req.body;
 		let {content} = req.body;
 		content = JSON.parse(content)
-		if(!title || !slug || !des) return res.json({success : false , message : "all fields are required"})
+		if(!title || !slug || !des) return res.status(400).json({success : false , message : "all fields are required"})
 		
 		// we need to check if , for this slug if any blog exists previously or not
 		const isBlogexists = await Blogs.findOne({slug});

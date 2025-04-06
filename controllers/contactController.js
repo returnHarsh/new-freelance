@@ -39,7 +39,7 @@ export const deleteAppointment  = async(req,res)=>{
 export const registerContact = async(req,res)=>{
 	try{
 		const {name , email , phone , date , time , message , clinicAddress , service } = req.body;
-		if(!name || !email || !phone || !clinicAddress || !date || !time) return res.json({sucess : false , message : "All fields are required"})
+		if(!name || !phone || !clinicAddress || !date || !time) return res.json({sucess : false , message : "All fields are required"})
 
 		// first we have to check for this date and time and address does any other appointment already exists or not
 		const isAppointmentExists = await Contact.find({

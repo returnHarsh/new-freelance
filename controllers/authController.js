@@ -209,10 +209,11 @@ export const logout = async(req,res)=>{
 		// here we have to delete the cookie
 		res.clearCookie("access-token", {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "strict",
+			secure: false,
+			sameSite: "lax",
 		});
-		return res.json({success : false , message : "User log out successfully"})
+
+		return res.json({success : true , message : "User log out successfully"})
 	}catch(err){
 		console.log("Error in logout " , err.message);
 		return res.json({success : false , message : err.message})

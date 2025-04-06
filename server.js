@@ -9,7 +9,7 @@ import {router as contactRouter} from "./routes/contactRoutes.js"
 import {router as adminRouter} from "./routes/adminRoutes.js" 
 import cookieParser from "cookie-parser";
 import cors from "cors"
-
+// const nodemailer = require("nodemailer");
 
 const PORT = process.env.PORT || 8080
 
@@ -18,6 +18,16 @@ app.use(cors({
 	origin : "http://localhost:3000",
 	credentials : true
 }))
+
+// setting the nodemailer
+// const transporter = nodemailer.createTransport({
+// 	service: "gmail",
+// 	auth: {
+// 	  user: "your-email@gmail.com", // Replace with your email
+// 	  pass: "your-email-password", // Use an app password instead of your main password
+// 	},
+//   });
+  
 
 // connecting our server to the DB
 ConnectDB()
