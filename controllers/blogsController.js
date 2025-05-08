@@ -48,14 +48,21 @@ export const createBlogs = async(req,res)=>{
 	try{
 		let coverImageUploadUrl
 		const coverImage = req.file
-		const{  title , slug , metaTitle , metaDescription , des} = req.body;
+		const{  title , slug , metaTitle , metaDescription , des , isEdit} = req.body;
 		let {content} = req.body;
 		content = JSON.parse(content)
 		if(!title || !slug || !des) return res.status(400).json({success : false , message : "all fields are required"})
 		
 		// we need to check if , for this slug if any blog exists previously or not
 		const isBlogexists = await Blogs.findOne({slug});
-		if(isBlogexists) return res.json({success : false , message : "A blog with this slug already exists."});
+
+		if(isBlogexists && isEdit){
+			await Blogs.findByIdAndDelete(isBlogexists._id)
+		}else{
+			return res.json({success : false , message : "A blog with this slug already exists."});
+		}
+
+		// if(isBlogexists) return res.json({success : false , message : "A blog with this slug already exists."});
 		
 		if(coverImage){
 			console.log("Cover image is uploaded")
@@ -72,7 +79,7 @@ export const createBlogs = async(req,res)=>{
 		}
 
 		const blog = await Blogs.create({
-			slug,
+			slug : slug.trim(),
 			metaDescription : metaDescription ? metaDescription : undefined,
 			metaTitle : metaTitle ? metaTitle : undefined ,
 			title,
